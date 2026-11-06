@@ -16,6 +16,7 @@ pipeline {
 
         stage('Build') {
             steps {
+                withCredentials([string(credentialsId: 'DOCKERHUB_USERNAME', variable: 'DOCKERHUB_USERNAME'), string(credentialsId: 'DOCKERHUB_TOKEN', variable: 'DOCKERHUB_TOKEN'), string(credentialsId: 'OPENWEATHER_API_KEY', variable: 'OPENWEATHER_API_KEY')]) {
                 sh '''#!/bin/bash
                 set -e
 
@@ -36,7 +37,8 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh '''#!/bin/bash
+            withCredentials([string(credentialsId: 'DOCKERHUB_USERNAME', variable: 'DOCKERHUB_USERNAME'), string(credentialsId: 'DOCKERHUB_TOKEN', variable: 'DOCKERHUB_TOKEN'), string(credentialsId: 'OPENWEATHER_API_KEY', variable: 'OPENWEATHER_API_KEY')]) {
+            sh '''#!/bin/bash
                 set -e
 
                 TEST_IMAGE="${DOCKERHUB_USERNAME}/python_pogoda:test"
@@ -89,6 +91,7 @@ pipeline {
             }
 
             steps {
+            withCredentials([string(credentialsId: 'DOCKERHUB_USERNAME', variable: 'DOCKERHUB_USERNAME'), string(credentialsId: 'DOCKERHUB_TOKEN', variable: 'DOCKERHUB_TOKEN'), string(credentialsId: 'OPENWEATHER_API_KEY', variable: 'OPENWEATHER_API_KEY')]) {
                 sh '''#!/bin/bash
                 set -e
 
