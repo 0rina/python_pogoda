@@ -32,6 +32,7 @@ pipeline {
 
                 echo "===> Build zakończony."
                 '''
+                }
             }
         }
 
@@ -82,6 +83,7 @@ pipeline {
                 echo
                 echo "===> OK - endpoint zwrócił odpowiedź 2xx."
                 '''
+                }
             }
         }
 
@@ -115,6 +117,7 @@ pipeline {
 
                 echo "===> Build & push zakończone."
                 '''
+                }
             }
         }
     }
