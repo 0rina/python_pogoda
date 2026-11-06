@@ -1,3 +1,4 @@
+
 pipeline {
     agent any
 
@@ -32,3 +33,86 @@ pipeline {
                 '''
             }
         }
+
+        stage('Test') {
+            steps {
+                sh '''#!/bin/bash
+                set -e
+
+                TEST_IMAGE="${DOCKERHUB_USERNAME}/python_pogoda:test"
+                CONTAINER_NAME="pogoda_api"
+
+                cleanup() {
+                    EXIT_CODE=$?
+                    echo "===> Sprzątanie kontenera..."
+
+                    if docker ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
+                        if [ $EXIT_CODE -ne 0 ]; then
+                            echo "===> Logi kontenera:"
+                            docker logs "${CONTAINER_NAME}" || true
+                        fi
+
+                        docker stop "${CONTAINER_NAME}" || true
+                        docker rm "${CONTAINER_NAME}" || true
+                    fi
+
+                    exit $EXIT_CODE
+                }
+
+                trap cleanup EXIT
+
+                echo "===> Ładuję obraz z image.tar"
+                docker load -i image.tar
+
+                echo "===> Uruchamiam kontener..."
+                docker run -d \
+                    --name "${CONTAINER_NAME}" \
+                    -p 8000:8000 \
+                    -e OPENWEATHER_API_KEY="${OPENWEATHER_API_KEY}" \
+                    "${TEST_IMAGE}"
+
+                echo "===> Czekam na start API..."
+                sleep 10
+
+                echo "===> Testuję endpoint /weather..."
+                curl -f "http://localhost:8000/weather?city=Warsaw&api_key=${OPENWEATHER_API_KEY}"
+
+                echo
+                echo "===> OK - endpoint zwrócił odpowiedź 2xx."
+                '''
+            }
+        }
+
+        stage('Deploy') {
+            when {
+                branch 'main'
+            }
+
+            steps {
+                sh '''#!/bin/bash
+                set -e
+
+                HUB_IMAGE_BASE="${DOCKERHUB_USERNAME}/python_pogoda"
+
+                echo "===> Aktualny BUILD_ID: ${BUILD_ID}"
+                echo "===> Logowanie do Docker Hub..."
+
+                echo "${DOCKERHUB_TOKEN}" | docker login \
+                    -u "${DOCKERHUB_USERNAME}" --password-stdin
+
+                echo "===> Buduję obraz..."
+                docker build \
+                    -t "${HUB_IMAGE_BASE}:jenkins" \
+                    -t "${HUB_IMAGE_BASE}:${BUILD_ID}" \
+                    .
+
+                echo "===> Wypycham obrazy..."
+                docker push "${HUB_IMAGE_BASE}:jenkins"
+                docker push "${HUB_IMAGE_BASE}:${BUILD_ID}"
+
+                echo "===> Build & push zakończone."
+                '''
+            }
+        }
+    }
+}
