@@ -6,10 +6,10 @@ pipeline {
                 echo 'Preparing the environment'
                 WORKDIR = '.'
             }
-        }
+        
         stage('Build') {
             steps {
-               sh '''#!/bin/bash
+                sh '''#!/bin/bash
                 set -e
                 
                 ls -la
@@ -27,8 +27,8 @@ pipeline {
                 echo "===> Build zakończony, plik image.tar gotowy (zarchiwizuj go jako artefakt)."
                 '''
                 }
-            }
-        }
+                      }
+        
         stage('Test') {
             steps {
                   sh '''#!/bin/bash
