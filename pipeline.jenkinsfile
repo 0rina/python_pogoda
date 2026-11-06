@@ -16,7 +16,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                withCredentials([string(credentialsId: 'DOCKERHUB_USERNAME', variable: 'DOCKERHUB_USERNAME'), string(credentialsId: 'DOCKERHUB_TOKEN', variable: 'DOCKERHUB_TOKEN'), string(credentialsId: 'OPENWEATHER_API_KEY', variable: 'OPENWEATHER_API_KEY')]) {
+                withCredentials([string(credentialsId: 'DOCKERHUB_USERNAME', variable: 'DOCKERHUB_USERNAME'), string(credentialsId: 'DOCKERHUB_TOKEN', variable: 'DOCKERHUB_TOKEN'), string(credentialsId: 'GLOBAL_API_POGODA', variable: 'OPENWEATHER_API_KEY')]) {
                 sh '''#!/bin/bash
                 set -e
 
@@ -38,7 +38,7 @@ pipeline {
 
         stage('Test') {
             steps {
-            withCredentials([string(credentialsId: 'DOCKERHUB_USERNAME', variable: 'DOCKERHUB_USERNAME'), string(credentialsId: 'DOCKERHUB_TOKEN', variable: 'DOCKERHUB_TOKEN'), string(credentialsId: 'OPENWEATHER_API_KEY', variable: 'OPENWEATHER_API_KEY')]) {
+            withCredentials([string(credentialsId: 'DOCKERHUB_USERNAME', variable: 'DOCKERHUB_USERNAME'), string(credentialsId: 'DOCKERHUB_TOKEN', variable: 'DOCKERHUB_TOKEN'), string(credentialsId: 'GLOBAL_API_POGODA', variable: 'OPENWEATHER_API_KEY')]) {
             sh '''#!/bin/bash
                 set -e
 
@@ -93,7 +93,7 @@ pipeline {
             }
 
             steps {
-            withCredentials([string(credentialsId: 'DOCKERHUB_USERNAME', variable: 'DOCKERHUB_USERNAME'), string(credentialsId: 'DOCKERHUB_TOKEN', variable: 'DOCKERHUB_TOKEN'), string(credentialsId: 'OPENWEATHER_API_KEY', variable: 'OPENWEATHER_API_KEY')]) {
+            withCredentials([string(credentialsId: 'DOCKERHUB_USERNAME', variable: 'DOCKERHUB_USERNAME'), string(credentialsId: 'DOCKERHUB_TOKEN', variable: 'DOCKERHUB_TOKEN'), string(credentialsId: 'GLOBAL_API_POGODA', variable: 'OPENWEATHER_API_KEY')]) {
                 sh '''#!/bin/bash
                 set -e
 
